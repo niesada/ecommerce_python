@@ -28,7 +28,7 @@ class Migration(migrations.Migration):
                     "file",
                     models.FileField(
                         storage=django.core.files.storage.FileSystemStorage(
-                            location="/Users/rzy119/dev/micro-ecommerce/local-cdn/protected"
+                            location="/Users/rzy119/dev/ecommerce_python/local-cdn/protected"
                         ),
                         upload_to=products.models.handle_product_attachment_upload,
                     ),

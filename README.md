@@ -1,4 +1,4 @@
-# micro-ecommerce
+# ecommerce_python
 Learn how to build a Micro eCommerce Web App with Python and Serverless Postgres
 
 
@@ -18,8 +18,8 @@ Learn how to build a Micro eCommerce Web App with Python and Serverless Postgres
 ```bash
 mkdir -p ~/dev
 cd ~/dev
-git clone https://github.com/codingforentrepreneurs/micro-ecommerce
-cd micro-ecommerce
+git clone https://github.com/codingforentrepreneurs/ecommerce_python
+cd ecommerce_python
 git checkout start
 ```
 
@@ -42,4 +42,12 @@ c:\Python310\python.exe -m venv venv
 python -m pip install pip pip-tools rav --upgrade
 rav run win_installs
 rav run win_freeze
+```
+
+## Error: Cannot find module './cli/index'
+## Require stack:
+## - /Users/rzy119/dev/ecommerce_python/node_modules/.bin/tailwindcss
+```
+npm uninstall tailwindcss
+npm install tailwindcss --save-dev
 ```
