@@ -3,7 +3,13 @@ from django.core.files.storage import FileSystemStorage
 from django.db import models
 from django.conf import settings
 import pathlib
+import stripe
 from django.urls import reverse
+
+from cfehome.env import config
+
+STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default=None)
+stripe.api_key = STRIPE_SECRET_KEY
 
 
 # Create your models here.
@@ -17,6 +23,7 @@ class Product(models.Model):
     handle = models.SlugField(unique=True)  # Slug
     price = models.DecimalField(max_digits=10, decimal_places=2, default=9.99)
     og_price = models.DecimalField(max_digits=10, decimal_places=2, default=9.99)
+    stripe_price_id = models.CharField(max_length=220, blank=True, null=True)
     stripe_price = models.IntegerField(default=999)  # 100 * price
     price_changed_timestamp = models.DateTimeField(
         auto_now=False, auto_now_add=False, blank=True, null=True
@@ -36,11 +43,28 @@ class Product(models.Model):
         return self.display_name
 
     def save(self, *args, **kwargs):
+        if self.name:
+            stripe_product_r = stripe.Product.create(name=self.name)
+            self.stripe_product_id = stripe_product_r.id
+        if not self.stripe_price_id:
+            stripe_price_obj = stripe.Price.create(
+                product= self.stripe_product_id,
+                unit_amount=self.stripe_price,
+                currency="usd"
+            )
+            self.stripe_price_id = stripe_price_obj.id
         if self.price != self.og_price:
             # price changed
             self.og_price = self.price
             # trigger an API request for the price
             self.stripe_price = int(self.price * 100)
+            if self.stripe_product_id:
+                stripe_price_obj = stripe.Price.create(
+                    product= self.stripe_product_id,
+                    unit_amount=self.stripe_price,
+                    currency="usd"
+                )
+                self.stripe_price_id = stripe_price_obj.id
             self.price_changed_timestamp = timezone.now()
         super().save(*args, **kwargs)
 

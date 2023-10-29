@@ -6,7 +6,7 @@ STRIPE_SECRET_KEY = config("STRIPE_SECRET_KEY", default=None)
 stripe.api_key = STRIPE_SECRET_KEY
 
 def product_sales_pipeline(product_name="Test product", product_price=1000):
-    stripe_product_obj = stripe.Product.create(productName=product_name)
+    stripe_product_obj = stripe.Product.create(name=product_name)
     stripe_product_id = stripe_product_obj.id
     stripe_price_obj = stripe.Price.create(
         product=stripe_product_id,
