@@ -54,8 +54,16 @@ def purchase_success_view(request):
         purchase = Purchase.objects.get(id=purchase_id)
         purchase.completed = True
         purchase.save()
+        del request.session['purchase_id']
+        return HttpResponseRedirect(purchase.product.get_absolute_url())
     return HttpResponse(f"Finished {purchase_id}")
 
 
 def purchase_stopped_view(request):
+    purchase_id = request.session.get("purchase_id")
+    if purchase_id:
+        purchase = Purchase.objects.get(id=purchase_id)
+        product = purchase.product
+        del request.session['purchase_id']
+        return HttpResponseRedirect(product.get_absolute_url())
     return HttpResponse("Stopped")
