@@ -26,6 +26,7 @@ def product_list_view(request):
 def product_manage_detail_view(request, handle=None):
     obj = get_object_or_404(Product, handle=handle)
     attachments = ProductAttachment.objects.filter(product=obj)
+    # attachments = obj.productattachment_set.all()
     is_manager = False
     if request.user.is_authenticated:
         is_manager = obj.user == request.user # verify ownership
